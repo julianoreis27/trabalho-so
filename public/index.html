@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estoque do Supermercado</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <div>
+        <h1>Estoque do Supermercado</h1>
+        <p class="sub">Cadastro e controle de produtos</p>
+      </div>
+      <span id="banco" class="selo" title="Banco de dados em uso">conectando…</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="cards" aria-label="Resumo do estoque">
+      <article class="card">
+        <span class="card-rotulo">Produtos cadastrados</span>
+        <strong id="kpi-produtos">–</strong>
+      </article>
+      <article class="card">
+        <span class="card-rotulo">Itens em estoque</span>
+        <strong id="kpi-itens">–</strong>
+      </article>
+      <article class="card">
+        <span class="card-rotulo">Valor total em estoque</span>
+        <strong id="kpi-valor">–</strong>
+      </article>
+      <article class="card card-alerta">
+        <span class="card-rotulo">Abaixo do mínimo</span>
+        <strong id="kpi-baixo">–</strong>
+      </article>
+      <article class="card card-aviso">
+        <span class="card-rotulo">Vencendo em 7 dias</span>
+        <strong id="kpi-vencendo">–</strong>
+      </article>
+    </section>
+
+    <section class="barra">
+      <input id="busca" type="search" placeholder="Buscar por nome, fornecedor ou código de barras" aria-label="Buscar" />
+      <select id="filtro-categoria" aria-label="Filtrar por categoria">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select id="filtro-status" aria-label="Filtrar por situação">
+        <option value="">Todas as situações</option>
+        <option value="baixo">Estoque baixo</option>
+        <option value="vencendo">Vencendo / vencido</option>
+      </select>
+      <button id="btn-novo" class="btn btn-primario">+ Novo produto</button>
+    </section>
+
+    <section class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th class="num">Quantidade</th>
+            <th class="num">Preço unit.</th>
+            <th class="num">Subtotal</th>
+            <th>Validade</th>
+            <th>Situação</th>
+            <th class="acoes-col">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="lista"></tbody>
+      </table>
+      <p id="vazio" class="vazio" hidden>Nenhum produto encontrado.</p>
+    </section>
+  </main>
+
+  <!-- Modal: cadastro / edição -->
+  <dialog id="modal-produto">
+    <form id="form-produto" novalidate>
+      <h2 id="modal-titulo">Novo produto</h2>
+      <div class="grid">
+        <label class="col-2">Nome *
+          <input name="nome" required maxlength="120" />
+          <small class="erro" data-erro="nome"></small>
+        </label>
+        <label>Categoria *
+          <select name="categoria" required></select>
+          <small class="erro" data-erro="categoria"></small>
+        </label>
+        <label>Código de barras
+          <input name="codigoBarras" inputmode="numeric" maxlength="14" placeholder="EAN-13" />
+          <small class="erro" data-erro="codigoBarras"></small>
+        </label>
+        <label>Quantidade *
+          <input name="quantidade" type="number" min="0" step="1" required />
+          <small class="erro" data-erro="quantidade"></small>
+        </label>
+        <label>Unidade
+          <select name="unidade"></select>
+          <small class="erro" data-erro="unidade"></small>
+        </label>
+        <label>Estoque mínimo
+          <input name="estoqueMinimo" type="number" min="0" step="1" value="0" />
+          <small class="erro" data-erro="estoqueMinimo"></small>
+        </label>
+        <label>Preço unitário (R$) *
+          <input name="precoUnitario" type="number" min="0" step="0.01" required />
+          <small class="erro" data-erro="precoUnitario"></small>
+        </label>
+        <label>Validade
+          <input name="validade" type="date" />
+          <small class="erro" data-erro="validade"></small>
+        </label>
+        <label>Fornecedor
+          <input name="fornecedor" maxlength="120" />
+          <small class="erro" data-erro="fornecedor"></small>
+        </label>
+      </div>
+      <div class="rodape-modal">
+        <button type="button" class="btn" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal: entrada / saída -->
+  <dialog id="modal-mov">
+    <form id="form-mov" novalidate>
+      <h2>Movimentar estoque</h2>
+      <p id="mov-produto" class="sub"></p>
+      <div class="grid">
+        <label>Tipo
+          <select name="tipo">
+            <option value="entrada">Entrada (+)</option>
+            <option value="saida">Saída (−)</option>
+          </select>
+        </label>
+        <label>Quantidade
+          <input name="quantidade" type="number" min="1" step="1" value="1" required />
+          <small class="erro" data-erro="quantidade"></small>
+        </label>
+      </div>
+      <div class="rodape-modal">
+        <button type="button" class="btn" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
