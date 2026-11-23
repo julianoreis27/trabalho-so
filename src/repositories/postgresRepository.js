@@ -60,20 +60,25 @@ function garantirUuid(id) {
 }
 
 /**
- * Repositório de produtos usando PostgreSQL (Amazon RDS / Aurora PostgreSQL).
+ * Repositório de produtos usando PostgreSQL (local ou Google Cloud SQL).
  */
 class PostgresRepository {
   constructor({ connectionString, ssl } = {}) {
     this.pool = new Pool({
       connectionString,
-      // No RDS, habilite SSL com DATABASE_SSL=true.
+      // Para conexões TCP com SSL, use DATABASE_SSL=true.
       ssl: ssl ? { rejectUnauthorized: false } : undefined,
       max: 10,
+    });
+    // Uma conexão ociosa pode ser derrubada pelo servidor (por exemplo, na
+    // manutenção do Cloud SQL). Sem este tratador, o erro derrubaria o processo.
+    this.pool.on('error', (err) => {
+      console.error('Conexão ociosa com o PostgreSQL encerrada:', err.message);
     });
   }
 
   get nome() {
-    return 'RDS (PostgreSQL)';
+    return 'PostgreSQL';
   }
 
   async init({ criarTabela = true } = {}) {

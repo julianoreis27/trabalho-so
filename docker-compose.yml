@@ -1,13 +1,6 @@
-# Bancos para desenvolvimento local.
-#   docker compose up -d dynamodb   -> DynamoDB Local em http://localhost:8000
-#   docker compose up -d postgres   -> PostgreSQL em localhost:5432
+# Banco PostgreSQL para desenvolvimento local:
+#   docker compose up -d   -> PostgreSQL em localhost:5432
 services:
-  dynamodb:
-    image: amazon/dynamodb-local:latest
-    command: -jar DynamoDBLocal.jar -sharedDb -inMemory
-    ports:
-      - "8000:8000"
-
   postgres:
     image: postgres:16-alpine
     environment:

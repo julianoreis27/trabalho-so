@@ -11,14 +11,20 @@ async function main() {
     console.log(`Estoque do supermercado rodando em http://localhost:${port} (banco: ${repo.nome})`);
   });
 
-  const encerrar = () => {
+  // Encerramento gracioso: o Cloud Run envia SIGTERM antes de desligar uma
+  // instância (e SIGKILL 10 s depois); no terminal, Ctrl+C envia SIGINT.
+  let encerrando = false;
+  const encerrar = (sinal) => {
+    if (encerrando) return;
+    encerrando = true;
+    console.log(`${sinal} recebido: finalizando as requisições em andamento...`);
     server.close(async () => {
       await repo.fechar();
       process.exit(0);
     });
   };
-  process.on('SIGINT', encerrar);
-  process.on('SIGTERM', encerrar);
+  process.on('SIGINT', () => encerrar('SIGINT'));
+  process.on('SIGTERM', () => encerrar('SIGTERM'));
 }
 
 main().catch((err) => {

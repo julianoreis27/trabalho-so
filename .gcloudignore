@@ -1,0 +1,9 @@
+# Arquivos que não são enviados ao Google Cloud no "gcloud run deploy --source ."
+.gcloudignore
+.git
+.gitignore
+node_modules/
+npm-debug.log
+.env
+docs/
+test/
